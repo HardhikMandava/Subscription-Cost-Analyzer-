@@ -1,102 +1,454 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
   <title>Subscription Cost Analyzer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
-    body{
-      font-family: Arial;
-      max-width:880px
-      margin: auto;
+    :root {
+      --bg: #0f172a;
+      --card-bg: #020617;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.15);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --danger: #f87171;
+      --border-subtle: #1f2937;
     }
-    input, select, button {
-      margin: 5px;
-      padding: 5px;
+
+    * {
+      box-sizing: border-box;
     }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #1e293b 0, #020617 55%);
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 960px;
+      background: var(--card-bg);
+      border-radius: 18px;
+      padding: 24px 26px 26px;
+      box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(148, 163, 184, 0.15);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .title-block h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .title-block p {
+      margin: 4px 0 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .pill {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.8);
+      white-space: nowrap;
+    }
+
+    .input-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .field {
+      flex: 1;
+      min-width: 140px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    input,
+    select {
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(15, 23, 42, 0.9);
+      padding: 8px 10px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    input::placeholder {
+      color: #6b7280;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.35);
+      background: #020617;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 7px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.1s ease, box-shadow 0.15s ease, background 0.15s ease, color 0.15s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0b1120;
+      box-shadow: 0 10px 25px rgba(56, 189, 248, 0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(56, 189, 248, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-muted);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(31, 41, 55, 0.9);
+      color: #e5e7eb;
+    }
+
+    .btn-danger {
+      background: rgba(127, 29, 29, 0.9);
+      color: #fee2e2;
+    }
+
+    .btn-danger:hover {
+      background: rgba(185, 28, 28, 0.95);
+      box-shadow: 0 10px 25px rgba(239, 68, 68, 0.45);
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      margin-top: 6px;
+      font-size: 0.85rem;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.98));
     }
-    th, td {
-      border: 1px solid black;
-      padding: 8px;
-      text-align: center;
+
+    thead {
+      background: rgba(15, 23, 42, 0.95);
+    }
+
+    th,
+    td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+    }
+
+    th {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    tbody tr:hover {
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    td.name-cell {
+      font-weight: 500;
+    }
+
+    td.billing-cell {
+      text-transform: capitalize;
+      color: var(--text-muted);
+    }
+
+    td.price-cell {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .totals-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+      gap: 12px;
+    }
+
+    .total-card {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.09), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      min-width: 180px;
+    }
+
+    .total-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .total-value {
+      font-size: 1.05rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .summary-text {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .highlight {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    @media (max-width: 640px) {
+      .app-shell {
+        padding: 18px 16px 20px;
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .totals-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="app-shell">
+    <header>
+      <div class="title-block">
+        <h1>Subscription Cost Analyzer</h1>
+        <p>Track your monthly and yearly spending across all your subscriptions.</p>
+      </div>
+      <div class="pill">First-Year Project • v1.0</div>
+    </header>
 
-<h1>Subscription Cost Analyzer</h1>
+    <section class="input-row">
+      <div class="field">
+        <label for="name">Subscription</label>
+        <input id="name" placeholder="Netflix, Spotify, iCloud..." />
+      </div>
 
-<input id="name" placeholder="Subscription Name">
-<input id="price" type="number" placeholder="Price">
-<select id="period">
-  <option value="monthly">Monthly</option>
-  <option value="yearly">Yearly</option>
-</select>
+      <div class="field">
+        <label for="price">Price</label>
+        <input id="price" type="number" step="0.01" placeholder="12.99" />
+      </div>
 
-<button onclick="addSubscription()">Add</button>
-<button onclick="calculate()">Calculate</button>
+      <div class="field">
+        <label for="period">Billing Cycle</label>
+        <select id="period">
+          <option value="monthly">Monthly</option>
+          <option value="yearly">Yearly</option>
+        </select>
+      </div>
+    </section>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Price</th>
-      <th>Billing</th>
-      <th>Monthly Cost</th>
-      <th>Yearly Cost</th>
-    </tr>
-  </thead>
-  <tbody id="table-body"></tbody>
-</table>
+    <section class="actions">
+      <button class="btn-primary" onclick="addSubscription()">+ Add Subscription</button>
+      <button class="btn-secondary" onclick="calculate()">Recalculate Totals</button>
+      <button class="btn-danger" onclick="clearAll()">Clear All</button>
+    </section>
 
-<h3 id="month"></h3>
-<h3 id="year"></h3>
+    <section>
+      <table>
+        <thead>
+          <tr>
+            <th>Subscription</th>
+            <th>Price</th>
+            <th>Billing</th>
+            <th>Monthly</th>
+            <th>Yearly</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </section>
 
-<script>
-let subs = [];
+    <section class="totals-row">
+      <div class="total-card">
+        <div class="total-label">Total Monthly</div>
+        <div class="total-value" id="month">$0.00</div>
+      </div>
+      <div class="total-card">
+        <div class="total-label">Total Yearly</div>
+        <div class="total-value" id="year">$0.00</div>
+      </div>
+      <div class="summary-text" id="suggestion">
+        Add a few subscriptions to see a breakdown and smart savings suggestion.
+      </div>
+    </section>
+  </div>
 
-function addSubscription() {
-  let name = document.getElementById("name").value;
-  let price = Number(document.getElementById("price").value);
-  let period = document.getElementById("period").value;
+  <script>
+    let subs = [];
 
-  if (!name || price <= 0) {
-    alert("Enter valid data.");
-    return;
-  }
+    function renderTable() {
+      const tbody = document.getElementById("table-body");
+      tbody.innerHTML = "";
 
-  subs.push({name, price, period});
-  document.getElementById("table-body").innerHTML += `
-    <tr>
-      <td>${name}</td>
-      <td>$${price}</td>
-      <td>${period}</td>
-      <td>-</td>
-      <td>-</td>
-    </tr>
-  `;
-}
+      subs.forEach((s) => {
+        let monthly, yearly;
+        if (s.period === "monthly") {
+          monthly = s.price;
+          yearly = s.price * 12;
+        } else {
+          yearly = s.price;
+          monthly = s.price / 12;
+        }
 
-function calculate() {
-  let monthly = 0;
-  let yearly = 0;
-
-  subs.forEach(s => {
-    if (s.period === "monthly") {
-      monthly += s.price;
-      yearly += s.price * 12;
-    } else {
-      yearly += s.price;
-      monthly += s.price / 12;
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td class="name-cell">${s.name}</td>
+          <td class="price-cell">$${s.price.toFixed(2)}</td>
+          <td class="billing-cell">${s.period}</td>
+          <td class="price-cell">$${monthly.toFixed(2)}</td>
+          <td class="price-cell">$${yearly.toFixed(2)}</td>
+        `;
+        tbody.appendChild(row);
+      });
     }
-  });
 
-  document.getElementById("month").innerText = "Total Monthly: $" + monthly.toFixed(2);
-  document.getElementById("year").innerText = "Total Yearly: $" + yearly.toFixed(2);
-}
-</script>
+    function addSubscription() {
+      const nameInput = document.getElementById("name");
+      const priceInput = document.getElementById("price");
+      const periodSelect = document.getElementById("period");
 
+      const name = nameInput.value.trim();
+      const price = Number(priceInput.value);
+      const period = periodSelect.value;
+
+      if (!name || isNaN(price) || price <= 0) {
+        alert("Please enter a valid subscription name and price.");
+        return;
+      }
+
+      subs.push({ name, price, period });
+
+      nameInput.value = "";
+      priceInput.value = "";
+      periodSelect.value = "monthly";
+
+      renderTable();
+      calculate();
+    }
+
+    function calculate() {
+      let monthly = 0;
+      let yearly = 0;
+
+      const costs = subs.map((s) => {
+        let m, y;
+        if (s.period === "monthly") {
+          m = s.price;
+          y = s.price * 12;
+        } else {
+          y = s.price;
+          m = s.price / 12;
+        }
+        monthly += m;
+        yearly += y;
+        return { name: s.name, monthly: m, yearly: y };
+      });
+
+      document.getElementById("month").innerText = `$${monthly.toFixed(2)}`;
+      document.getElementById("year").innerText = `$${yearly.toFixed(2)}`;
+
+      const suggestionEl = document.getElementById("suggestion");
+
+      if (costs.length === 0) {
+        suggestionEl.textContent =
+          "Add a few subscriptions to see a breakdown and smart savings suggestion.";
+        return;
+      }
+
+      costs.sort((a, b) => b.monthly - a.monthly);
+      const top = costs[0];
+
+      suggestionEl.innerHTML = `
+        You spend <span class="highlight">$${monthly.toFixed(
+          2
+        )}/month</span> on subscriptions. 
+        Canceling <span class="highlight">${top.name}</span> alone would save 
+        <span class="highlight">$${top.monthly.toFixed(
+          2
+        )}/month</span> ($${top.yearly.toFixed(2)}/year).
+      `;
+    }
+
+    function clearAll() {
+      subs = [];
+      renderTable();
+      document.getElementById("month").innerText = "$0.00";
+      document.getElementById("year").innerText = "$0.00";
+      document.getElementById("suggestion").textContent =
+        "Add a few subscriptions to see a breakdown and smart savings suggestion.";
+    }
+  </script>
 </body>
 </html>
