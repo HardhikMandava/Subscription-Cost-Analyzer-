@@ -1,1 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Subscription Cost Analyzer</title>
+  <style>
+    body{
+      font-family: Arial;
+      max-width:880px
+      margin: auto;
+    }
+    input, select, button {
+      margin: 5px;
+      padding: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
 
+<h1>Subscription Cost Analyzer</h1>
+
+<input id="name" placeholder="Subscription Name">
+<input id="price" type="number" placeholder="Price">
+<select id="period">
+  <option value="monthly">Monthly</option>
+  <option value="yearly">Yearly</option>
+</select>
+
+<button onclick="addSubscription()">Add</button>
+<button onclick="calculate()">Calculate</button>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Price</th>
+      <th>Billing</th>
+      <th>Monthly Cost</th>
+      <th>Yearly Cost</th>
+    </tr>
+  </thead>
+  <tbody id="table-body"></tbody>
+</table>
+
+<h3 id="month"></h3>
+<h3 id="year"></h3>
+
+<script>
+let subs = [];
+
+function addSubscription() {
+  let name = document.getElementById("name").value;
+  let price = Number(document.getElementById("price").value);
+  let period = document.getElementById("period").value;
+
+  if (!name || price <= 0) {
+    alert("Enter valid data.");
+    return;
+  }
+
+  subs.push({name, price, period});
+  document.getElementById("table-body").innerHTML += `
+    <tr>
+      <td>${name}</td>
+      <td>$${price}</td>
+      <td>${period}</td>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+  `;
+}
+
+function calculate() {
+  let monthly = 0;
+  let yearly = 0;
+
+  subs.forEach(s => {
+    if (s.period === "monthly") {
+      monthly += s.price;
+      yearly += s.price * 12;
+    } else {
+      yearly += s.price;
+      monthly += s.price / 12;
+    }
+  });
+
+  document.getElementById("month").innerText = "Total Monthly: $" + monthly.toFixed(2);
+  document.getElementById("year").innerText = "Total Yearly: $" + yearly.toFixed(2);
+}
+</script>
+
+</body>
+</html>
